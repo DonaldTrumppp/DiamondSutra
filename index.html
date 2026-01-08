@@ -34,7 +34,7 @@
     <button id="loginBtn">Login with Google</button>
   </div>
 
-  <script>document.getElementById("loginBtn").addEventListener("click", signInWithGoogle);</script>
+  
   
   <!-- Firebase SDKs -->
   <script type="module">
@@ -173,7 +173,9 @@ async function ensureSignedIn() {
           saveProgress(user.uid, sections[currentIndex].id, 0);
         }
       });
+      document.getElementById("loginBtn").addEventListener("click", signInWithGoogle);
     }
+    
 
     initReader();
   </script>
