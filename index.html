@@ -71,16 +71,18 @@
     }
     }
 
-
-    // Listen for auth changes
     onAuthStateChanged(auth, (user) => {
     const emailElement = document.getElementById("userEmail");
     if (user) {
-        emailElement.textContent = `Signed in as: ${user.email || "Anonymous"}`;
+        emailElement.textContent = `Signed in as: ${user.email}`;
+        // ✅ user stays signed in across visits
     } else {
         emailElement.textContent = "Not signed in";
+        // Show login button so they can sign in
+        document.getElementById("loginBtn").style.display = "block";
     }
     });
+
 
     
     // Ensure signed in
