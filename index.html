@@ -181,12 +181,22 @@
     const fontValue = document.getElementById("fontValue");
     const content = document.getElementById("content");
     
-    // Update font size when slider moves
+    // Load saved font size
+    const savedSize = localStorage.getItem("fontSize");
+    if (savedSize) {
+      content.style.fontSize = savedSize;
+      fontSlider.value = parseInt(savedSize);
+      fontValue.textContent = savedSize;
+    }
+    
+    // Save on change
     fontSlider.addEventListener("input", () => {
       const size = fontSlider.value + "px";
       content.style.fontSize = size;
       fontValue.textContent = size;
+      localStorage.setItem("fontSize", size);
     });
+
 
     initReader();
     
