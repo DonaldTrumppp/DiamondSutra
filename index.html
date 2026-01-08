@@ -56,29 +56,29 @@
     // --- Auth ---
     const provider = new GoogleAuthProvider();
 
-// Sign in with Google
-async function signInWithGoogle() {
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    console.log("Signed in as:", user.email);
-    return user;
-  } catch (error) {
-    console.error("Login failed:", error);
-  }
-}
+    // Sign in with Google
+    async function signInWithGoogle() {
+    try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        console.log("Signed in as:", user.email);
+        return user;
+    } catch (error) {
+        console.error("Login failed:", error);
+    }
+    }
 
-// Ensure signed in
-async function ensureSignedIn() {
-  return new Promise((resolve) => {
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        user = await signInWithGoogle();
-      }
-      resolve(user);
+    // Ensure signed in
+    async function ensureSignedIn() {
+    return new Promise((resolve) => {
+        onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            user = await signInWithGoogle();
+        }
+        resolve(user);
+        });
     });
-  });
-}
+    }
 
 
     // --- Firestore helpers ---
@@ -142,39 +142,39 @@ async function ensureSignedIn() {
 
     // --- Init ---
     async function initReader() {
-      const response = await fetch("text.txt"); // load your text file
-      const fullText = await response.text();
-      sections = splitIntoSections(fullText);
+        const response = await fetch("text.txt"); // load your text file
+        const fullText = await response.text();
+        sections = splitIntoSections(fullText);
 
-      const user = await ensureSignedIn();
-      renderSection(0);
+        const user = await ensureSignedIn();
+        renderSection(0);
 
-      await subscribeProgress(user.uid, (sectionId, offsetPx) => {
-        const idx = findIndexById(sectionId);
-        if (idx >= 0 && idx !== currentIndex) {
-          renderSection(idx);
-        }
-        window.requestAnimationFrame(() => {
-          window.scrollTo(0, offsetPx || 0);
+        await subscribeProgress(user.uid, (sectionId, offsetPx) => {
+            const idx = findIndexById(sectionId);
+            if (idx >= 0 && idx !== currentIndex) {
+            renderSection(idx);
+            }
+            window.requestAnimationFrame(() => {
+            window.scrollTo(0, offsetPx || 0);
+            });
         });
-      });
 
-      window.addEventListener("scroll", () => onScroll(user.uid), { passive: true });
+        window.addEventListener("scroll", () => onScroll(user.uid), { passive: true });
 
-      document.getElementById("nextBtn").addEventListener("click", () => {
-        if (currentIndex < sections.length - 1) {
-          renderSection(currentIndex + 1);
-          saveProgress(user.uid, sections[currentIndex].id, 0);
+        document.getElementById("nextBtn").addEventListener("click", () => {
+            if (currentIndex < sections.length - 1) {
+            renderSection(currentIndex + 1);
+            saveProgress(user.uid, sections[currentIndex].id, 0);
+            }
+        });
+        document.getElementById("prevBtn").addEventListener("click", () => {
+            if (currentIndex > 0) {
+            renderSection(currentIndex - 1);
+            saveProgress(user.uid, sections[currentIndex].id, 0);
+            }
+        });
+        document.getElementById("loginBtn").addEventListener("click", signInWithGoogle);
         }
-      });
-      document.getElementById("prevBtn").addEventListener("click", () => {
-        if (currentIndex > 0) {
-          renderSection(currentIndex - 1);
-          saveProgress(user.uid, sections[currentIndex].id, 0);
-        }
-      });
-      document.getElementById("loginBtn").addEventListener("click", signInWithGoogle);
-    }
     
 
     initReader();
