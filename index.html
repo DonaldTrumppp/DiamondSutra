@@ -177,6 +177,17 @@
         }
     
     document.getElementById("loginBtn").addEventListener("click", signInWithGoogle);
+    const fontSlider = document.getElementById("fontSlider");
+    const fontValue = document.getElementById("fontValue");
+    const content = document.getElementById("content");
+    
+    // Update font size when slider moves
+    fontSlider.addEventListener("input", () => {
+      const size = fontSlider.value + "px";
+      content.style.fontSize = size;
+      fontValue.textContent = size;
+    });
+
     initReader();
     
   </script>
