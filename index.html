@@ -29,9 +29,11 @@
   <h1>My Text Reader</h1>
   <div id="content"></div>
   <div id="nav">
+    <button id="loginBtn">Login with Google</button>
+
     <button id="prevBtn">Prev</button>
     <button id="nextBtn">Next</button>
-    <button id="loginBtn">Login with Google</button>
+
   </div>
 
   
@@ -173,11 +175,12 @@
             saveProgress(user.uid, sections[currentIndex].id, 0);
             }
         });
-        document.getElementById("loginBtn").addEventListener("click", signInWithGoogle);
+        
         }
     
-
+    document.getElementById("loginBtn").addEventListener("click", signInWithGoogle);
     initReader();
+    
   </script>
 </body>
 </html>
