@@ -35,6 +35,12 @@ main {
     margin-bottom: 1rem;
 }
 
+#fontSlider {
+  width: 100%;
+  max-width: 400px;
+}
+
+
 #pagination {
     display: flex;
     justify-content: space-between;
