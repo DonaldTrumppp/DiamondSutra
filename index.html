@@ -27,6 +27,8 @@
 </head>
 <body>
   <h1>My Text Reader</h1>
+    <div> <p id="userEmail">Not signed in</p>
+    </div>
   <div id="content"></div>
   <div id="nav">
     <button id="loginBtn">Login with Google</button>
@@ -58,18 +60,29 @@
     // --- Auth ---
     const provider = new GoogleAuthProvider();
 
-    // Sign in with Google
     async function signInWithGoogle() {
     try {
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
-        console.log("Signed in as:", user.email);
+        document.getElementById("userEmail").textContent = `Signed in as: ${user.email}`;
         return user;
     } catch (error) {
         console.error("Login failed:", error);
     }
     }
 
+
+    // Listen for auth changes
+    onAuthStateChanged(auth, (user) => {
+    const emailElement = document.getElementById("userEmail");
+    if (user) {
+        emailElement.textContent = `Signed in as: ${user.email || "Anonymous"}`;
+    } else {
+        emailElement.textContent = "Not signed in";
+    }
+    });
+
+    
     // Ensure signed in
     async function ensureSignedIn() {
     return new Promise((resolve) => {
