@@ -106,14 +106,26 @@
 
 
     function splitIntoSections(fullText) {
-      // Matches "1.", "10.", "100." etc. at the start of a line
-      const parts = fullText.split(/(?=\d+\.)/g);
-      return parts.map((content, idx) => ({
-        id: `section-${idx + 1}`,
-        title: content.match(/^\d+\./)?.[0] ?? `Section ${idx + 1}`,
-        content
-      }));
+      // Normalize line breaks (optional)
+      const text = fullText.replace(/\r\n/g, '\n');
+    
+      // Split at the start of markers, keep them in the next chunk
+      const parts = text.split(/(?=【\d+[\.．]】)/g);
+    
+      // Filter out any leading content before the first marker if needed
+      const cleaned = parts.filter(p => p.trim().length > 0);
+    
+      return cleaned.map((content, idx) => {
+        const match = content.match(/^【\d+[\.．]】/);
+        const title = match ? match[0] : `Section ${idx + 1}`;
+        return {
+          id: `section-${idx + 1}`,
+          title,
+          content
+        };
+      });
     }
+
 
     // --- UI rendering ---
     let sections = [];
