@@ -106,11 +106,12 @@
 
 
     function splitIntoSections(fullText) {
-      const regex = /【\d+[\.．]】[\s\S]*?(?=(?:【\d+[\.．]】)|$)/g;
-      const sections = fullText.match(regex) || [];
+      // Split at the start of 【number-number】 markers
+      const parts = fullText.split(/(?=【\d+-\d+】)/g);
     
-      return sections.map((content, idx) => {
-        const title = content.match(/^【\d+[\.．]】/)?.[0] ?? `Section ${idx + 1}`;
+      return parts.filter(p => p.trim().length > 0).map((content, idx) => {
+        const match = content.match(/^【\d+-\d+】/);
+        const title = match ? match[0] : `Section ${idx + 1}`;
         return {
           id: `section-${idx + 1}`,
           title,
@@ -118,6 +119,7 @@
         };
       });
     }
+
 
 
 
