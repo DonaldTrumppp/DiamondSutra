@@ -87,16 +87,13 @@
     }
 
     let saveTimer = null;
-    function saveProgress(uid, sectionId, offsetPx) {
-      if (saveTimer) clearTimeout(saveTimer);
-      saveTimer = setTimeout(async () => {
-        await setDoc(progressDocRef(uid), {
-          currentSectionId: sectionId,
-          offsetPx,
-          updatedAt: serverTimestamp()
-        }, { merge: true });
-      }, 400);
+    function saveProgress(uid, sectionId) {
+      setDoc(progressDocRef(uid), {
+        currentSectionId: sectionId,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
     }
+
 
     async function subscribeProgress(uid, onUpdate) {
       return onSnapshot(progressDocRef(uid), (snap) => {
@@ -107,12 +104,13 @@
       });
     }
 
-    // --- Text splitting ---
+
     function splitIntoSections(fullText) {
-      const parts = fullText.split(/(?=\d．)/g); // keep "n．"
+      // Matches "1.", "10.", "100." etc. at the start of a line
+      const parts = fullText.split(/(?=\d+\.)/g);
       return parts.map((content, idx) => ({
         id: `section-${idx + 1}`,
-        title: content.match(/^\d．/)?.[0] ?? `Section ${idx + 1}`,
+        title: content.match(/^\d+\./)?.[0] ?? `Section ${idx + 1}`,
         content
       }));
     }
@@ -132,13 +130,6 @@
       return sections.findIndex(s => s.id === id);
     }
 
-    function onScroll(uid) {
-      const offsetPx = window.scrollY || document.documentElement.scrollTop || 0;
-      const currentSectionId = sections[currentIndex]?.id;
-      if (currentSectionId) {
-        saveProgress(uid, currentSectionId, offsetPx);
-      }
-    }
 
     // --- Init ---
     async function initReader() {
@@ -159,22 +150,23 @@
             });
         });
 
-        window.addEventListener("scroll", () => onScroll(user.uid), { passive: true });
 
         document.getElementById("nextBtn").addEventListener("click", () => {
-            if (currentIndex < sections.length - 1) {
+          if (currentIndex < sections.length - 1) {
             renderSection(currentIndex + 1);
-            saveProgress(user.uid, sections[currentIndex].id, 0);
-            }
-        });
-        document.getElementById("prevBtn").addEventListener("click", () => {
-            if (currentIndex > 0) {
-            renderSection(currentIndex - 1);
-            saveProgress(user.uid, sections[currentIndex].id, 0);
-            }
+            saveProgress(user.uid, sections[currentIndex].id);
+          }
         });
         
-        }
+        document.getElementById("prevBtn").addEventListener("click", () => {
+          if (currentIndex > 0) {
+            renderSection(currentIndex - 1);
+            saveProgress(user.uid, sections[currentIndex].id);
+          }
+        });
+
+        
+    }
     
     document.getElementById("loginBtn").addEventListener("click", signInWithGoogle);
     const fontSlider = document.getElementById("fontSlider");
