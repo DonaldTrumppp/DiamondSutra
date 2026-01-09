@@ -106,18 +106,11 @@
 
 
     function splitIntoSections(fullText) {
-      // Normalize line breaks (optional)
-      const text = fullText.replace(/\r\n/g, '\n');
+      const regex = /【\d+[\.．]】[\s\S]*?(?=(?:【\d+[\.．]】)|$)/g;
+      const sections = fullText.match(regex) || [];
     
-      // Split at the start of markers, keep them in the next chunk
-      const parts = text.split(/(?=【\d+[\.．]】)/g);
-    
-      // Filter out any leading content before the first marker if needed
-      const cleaned = parts.filter(p => p.trim().length > 0);
-    
-      return cleaned.map((content, idx) => {
-        const match = content.match(/^【\d+[\.．]】/);
-        const title = match ? match[0] : `Section ${idx + 1}`;
+      return sections.map((content, idx) => {
+        const title = content.match(/^【\d+[\.．]】/)?.[0] ?? `Section ${idx + 1}`;
         return {
           id: `section-${idx + 1}`,
           title,
@@ -125,6 +118,7 @@
         };
       });
     }
+
 
 
     // --- UI rendering ---
